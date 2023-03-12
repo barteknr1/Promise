@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix';
 
 const datetimePicker = document.querySelector('#datetime-picker');
 const start = document.querySelector('button[data-start]');
@@ -17,13 +18,13 @@ const options = {
   minuteIncrement: 1,
     onClose(selectedDates) {
         const date = new Date();
-        console.log(convertMs(selectedDates[0].getTime() - date.getTime()));
         if (selectedDates[0].getTime() < date.getTime()) {
-            window.alert("Please choose a date in the future")
-            start.setAttribute('disabled', '')
+            start.setAttribute('disabled', '');
+            Notiflix.Notify.failure("Please choose a date in the future");
         }
         else {
             start.removeAttribute('disabled');
+            Notiflix.Notify.success('Date selected');
         }
   },
 };
@@ -47,23 +48,25 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+let addLeadingZero = value => value.toString().padStart(2, '0');
+
 start.addEventListener('click', () => {
     start.setAttribute('disabled', '');
     datetimePicker.setAttribute('disabled', '');
-    let timeLeft = new Date(datetimePicker.value) - new Date();
     let timer = setInterval(() => {
-        console.log(timeLeft);
-        // days.textContent =
-        // hours.textContent =
-        // minutes.textContent =
-        // seconds.textContent =   
+        let timeLeft = new Date(datetimePicker.value) - new Date();
+        let ms = convertMs(timeLeft);
+        if (timeLeft >= 0) {
+            days.textContent = addLeadingZero(ms.days);
+            hours.textContent = addLeadingZero(ms.hours);
+            minutes.textContent = addLeadingZero(ms.minutes);
+            seconds.textContent = addLeadingZero(ms.seconds);
+        }
+        else {
+            clearInterval(timer);
+            start.removeAttribute('disabled');
+            datetimePicker.removeAttribute('disabled');
+            Notiflix.Notify.info("Time's up")
+        }
     }, 1000);
-    if (timeLeft >= 0) {
-    }
-    else {
-        clearInterval(timer);
-        start.removeAttribute('disabled');
-        datetimePicker.removeAttribute('disabled');
-    }
-})
-// const asd = convertMs(selectedDates[0].getTime() - date.getTime());
+});
