@@ -22,13 +22,13 @@ create.addEventListener('click', e => {
   let position = 1;
   let timeout = setTimeout(() => {
     let interval = setInterval(() => {
-          promiseDelay = Number(delay.value) + position * Number(step.value)
-        createPromise(position, promiseDelay);
-          position++;
-          if (position > Number(amount.value)) {
-            clearInterval(interval);
-            clearTimeout(timeout);
-        };
-      }, step.value);
-}, delay.value);
+      const promiseDelay = Number(delay.value) + position * Number(step.value)
+      createPromise(position, promiseDelay)
+      position++
+      if (position > Number(amount.value)) {
+        clearInterval(interval);
+        clearTimeout(timeout)
+      }
+    }, step.value);
+  }, delay.value);
 });
